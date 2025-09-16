@@ -1,0 +1,114 @@
+class WeatherDataStorage:
+    def _init_(self, years, cities, sentinel=None):
+        self.years = years
+        self.cities = cities
+        self.sentinel = sentinel
+        self.data = [[sentinel for _ in cities] for _ in years]
+
+    def insert(self, year, city, temperature):
+        if year in self.years and city in self.cities:
+            row = self.years.index(year)
+            col = self.cities.index(city)
+            self.data[row][col] = temperature
+            print(f"Inserted: {temperature}°C for {city} in {year}")
+        else:
+            print("Invalid year or city")
+
+    def delete(self, year, city):
+        if year in self.years and city in self.cities:
+            row = self.years.index(year)
+            col = self.cities.index(city)
+            self.data[row][col] = self.sentinel
+            print(f"Deleted record for {city} in {year}")
+        else:
+            print("Invalid year or city")
+
+    def retrieve(self, year, city):
+        if year in self.years and city in self.cities:
+            row = self.years.index(year)
+            col = self.cities.index(city)
+            return self.data[row][col]
+        return None
+
+    def row_major_access(self):
+        for i, year in enumerate(self.years):
+            for j, city in enumerate(self.cities):
+                print(f"Year: {year}, City: {city}, Temp: {self.data[i][j]}")
+
+    def column_major_access(self):
+        for j, city in enumerate(self.cities):
+            for i, year in enumerate(self.years):
+                print(f"Year: {year}, City: {city}, Temp: {self.data[i][j]}")
+
+    def handle_sparse_data(self):
+        sparse_list = []
+        for i, year in enumerate(self.years):
+            for j, city in enumerate(self.cities):
+                if self.data[i][j] != self.sentinel:
+                    sparse_list.append((year, city, self.data[i][j]))
+        return sparse_list
+
+    def analyze_complexity(self):
+        print("Insert: O(1)")
+        print("Delete: O(1)")
+        print("Retrieve: O(1)")
+        print("Row/Column Traversal: O(N*M)")
+        print("Sparse Representation: O(K), K = non-empty records")
+
+if __name__ == "__main__":
+    years = list(map(int, input("Enter years separated by space: ").split()))
+    cities = input("Enter city names separated by space: ").split()
+
+    storage = WeatherDataStorage(years, cities, sentinel=None)
+
+    while True:
+        print("\n--- Weather Data Menu ---")
+        print("1. Insert Record")
+        print("2. Delete Record")
+        print("3. Retrieve Record")
+        print("4. Row-Major Access")
+        print("5. Column-Major Access")
+        print("6. Show Sparse Data")
+        print("7. Complexity Analysis")
+        print("8. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            year = int(input("Enter year: "))
+            city = input("Enter city: ")
+            temp = float(input("Enter temperature: "))
+            storage.insert(year, city, temp)
+
+        elif choice == "2":
+            year = int(input("Enter year: "))
+            city = input("Enter city: ")
+            storage.delete(year, city)
+
+        elif choice == "3":
+            year = int(input("Enter year: "))
+            city = input("Enter city: ")
+            temp = storage.retrieve(year, city)
+            print(f"Temperature for {city} in {year}: {temp}")
+
+        elif choice == "4":
+            print("\nRow-major order:")
+            storage.row_major_access()
+
+        elif choice == "5":
+            print("\nColumn-major order:")
+            storage.column_major_access()
+
+        elif choice == "6":
+            print("\nSparse Data Records:")
+            print(storage.handle_sparse_data())
+
+        elif choice == "7":
+            storage.analyze_complexity()
+
+        elif choice == "8":
+            print("Exiting program...")
+            break
+
+        else:
+            print("Invalid choice, try again.")
